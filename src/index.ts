@@ -262,6 +262,69 @@ const MOCK_FEEDBACK = [
     user: "security_focused",
     votes: 23,
     category: "praise"
+  },
+  {
+    id: 29,
+    source: "GitHub",
+    text: "I absolutely love Cloudflare Workers! The developer experience is fantastic and the performance is outstanding.",
+    timestamp: "2026-01-17T14:30:00Z",
+    user: "dev_advocate",
+    votes: 30,
+    category: "praise"
+  },
+  {
+    id: 30,
+    source: "Discord",
+    text: "This is amazing! Our application latency improved dramatically. Best decision we made this year!",
+    timestamp: "2026-01-17T10:15:00Z",
+    user: "tech_lead",
+    votes: 26,
+    category: "praise"
+  },
+  {
+    id: 31,
+    source: "Email",
+    text: "Perfect solution for our needs. The documentation is excellent and the community support is wonderful.",
+    timestamp: "2026-01-16T16:45:00Z",
+    user: "satisfied_user",
+    votes: 22,
+    category: "praise"
+  },
+  {
+    id: 32,
+    source: "Community Forum",
+    text: "Incredible platform! Easy to use, fast deployment, and the free tier is generous. Highly recommend!",
+    timestamp: "2026-01-16T12:20:00Z",
+    user: "startup_ceo",
+    votes: 24,
+    category: "praise"
+  },
+  {
+    id: 33,
+    source: "Support Ticket",
+    text: "Great service! The team helped us migrate seamlessly. Everything works perfectly now. Thank you!",
+    timestamp: "2026-01-16T09:00:00Z",
+    user: "migrating_team",
+    votes: 18,
+    category: "praise"
+  },
+  {
+    id: 34,
+    source: "Twitter",
+    text: "Love how quick and easy it is to deploy. The developer tools are awesome and the pricing is fair.",
+    timestamp: "2026-01-15T18:30:00Z",
+    user: "indie_dev",
+    votes: 15,
+    category: "praise"
+  },
+  {
+    id: 35,
+    source: "GitHub",
+    text: "Brilliant platform! The edge computing capabilities are impressive and the global network is superb.",
+    timestamp: "2026-01-15T13:15:00Z",
+    user: "cloud_architect",
+    votes: 20,
+    category: "praise"
   }
 ];
 
@@ -498,6 +561,7 @@ function getHTMLTemplate(analysisResults: any) {
             border: 1px solid var(--border);
             border-radius: 8px;
             padding: 1.5rem;
+            transition: opacity 0.3s ease, transform 0.3s ease;
         }
         
         .feedback-header {
@@ -646,11 +710,70 @@ function getHTMLTemplate(analysisResults: any) {
             padding: 1rem;
             text-align: center;
             transition: all 0.2s ease;
+            cursor: pointer;
+            user-select: none;
         }
 
         .category-card:hover {
             border-color: var(--accent-primary);
             transform: translateY(-2px);
+        }
+
+        .category-card.active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(255, 107, 157, 0.15));
+            border-color: var(--accent-primary);
+            border-width: 2px;
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.2);
+        }
+
+        .category-card.active .category-name {
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .category-card.active .category-count {
+            color: var(--accent-secondary);
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .show-all-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .show-all-btn:hover {
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .show-all-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .feedback-item.hidden {
+            display: none;
+        }
+
+        .filter-indicator {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-family: 'Space Mono', monospace;
         }
 
         .category-name {
@@ -806,9 +929,12 @@ function getHTMLTemplate(analysisResults: any) {
 
         <section class="section">
             <h2 class="section-title">📊 Feedback by Category</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem;">
+                Click a category to filter feedback below
+            </p>
             <div class="category-grid">
                 ${analysisResults.categoryBreakdown.map((category: any, index: number) => `
-                    <div class="category-card" style="animation-delay: ${1.1 + index * 0.05}s; opacity: 0;">
+                    <div class="category-card" data-category="${category.key}" style="animation-delay: ${1.1 + index * 0.05}s; opacity: 0;">
                         <div class="category-name">${category.name}</div>
                         <div class="category-count">${category.count}</div>
                     </div>
@@ -837,10 +963,18 @@ function getHTMLTemplate(analysisResults: any) {
         </section>
         
         <section class="section">
-            <h2 class="section-title">Recent Feedback</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 class="section-title" style="margin-bottom: 0;">Recent Feedback</h2>
+                <div class="filter-controls">
+                    <button class="show-all-btn active" id="showAllBtn">Show All</button>
+                    <span class="filter-indicator" id="filterIndicator"></span>
+                </div>
+            </div>
             <div class="feedback-list">
-                ${analysisResults.recentFeedback.map((feedback: any, index: number) => `
-                    <div class="feedback-item" style="animation-delay: ${0.7 + index * 0.05}s; opacity: 0;">
+                ${analysisResults.recentFeedback.map((feedback: any, index: number) => {
+                  const categoryKey = feedback.category || '';
+                  return `
+                    <div class="feedback-item" data-category="${categoryKey}" style="animation-delay: ${0.7 + index * 0.05}s; opacity: 0;">
                         <div class="feedback-header">
                             <span class="feedback-source">${feedback.source}</span>
                             <div style="display: flex; gap: 1rem; align-items: center;">
@@ -855,7 +989,8 @@ function getHTMLTemplate(analysisResults: any) {
                             <span>@${feedback.user}</span>
                         </div>
                     </div>
-                `).join('')}
+                  `;
+                }).join('')}
             </div>
         </section>
         
@@ -869,43 +1004,205 @@ function getHTMLTemplate(analysisResults: any) {
             </div>
         </footer>
     </div>
+    
+    <script>
+        (function() {
+            let currentFilter = null;
+            const categoryCards = document.querySelectorAll('.category-card');
+            const feedbackItems = document.querySelectorAll('.feedback-item');
+            const showAllBtn = document.getElementById('showAllBtn');
+            const filterIndicator = document.getElementById('filterIndicator');
+            
+            // Function to update filter indicator
+            function updateFilterIndicator(categoryName) {
+                if (categoryName) {
+                    filterIndicator.textContent = \`Filtered by: \${categoryName}\`;
+                } else {
+                    filterIndicator.textContent = '';
+                }
+            }
+            
+            // Function to filter feedback items
+            function filterFeedback(categoryKey, categoryName) {
+                currentFilter = categoryKey;
+                
+                // Update category cards
+                categoryCards.forEach(card => {
+                    if (card.dataset.category === categoryKey) {
+                        card.classList.add('active');
+                    } else {
+                        card.classList.remove('active');
+                    }
+                });
+                
+                // Update show all button
+                if (categoryKey) {
+                    showAllBtn.classList.remove('active');
+                } else {
+                    showAllBtn.classList.add('active');
+                }
+                
+                // Filter feedback items with smooth transition
+                let visibleCount = 0;
+                feedbackItems.forEach((item, index) => {
+                    const itemCategory = item.dataset.category || '';
+                    if (!categoryKey || itemCategory === categoryKey) {
+                        item.classList.remove('hidden');
+                        // Add slight delay for staggered animation
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, index * 50);
+                        visibleCount++;
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'translateY(-10px)';
+                        setTimeout(() => {
+                            item.classList.add('hidden');
+                        }, 200);
+                    }
+                });
+                
+                // Update indicator
+                updateFilterIndicator(categoryName);
+            }
+            
+            // Add click handlers to category cards
+            categoryCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const categoryKey = this.dataset.category;
+                    const categoryName = this.querySelector('.category-name').textContent;
+                    filterFeedback(categoryKey, categoryName);
+                });
+            });
+            
+            // Add click handler to show all button
+            showAllBtn.addEventListener('click', function() {
+                filterFeedback(null, null);
+                
+                // Remove active state from all category cards
+                categoryCards.forEach(card => {
+                    card.classList.remove('active');
+                });
+            });
+        })();
+    </script>
 </body>
 </html>`;
 }
 
 // Analyze sentiment using Workers AI
-async function analyzeSentiment(env: Env, text: string): Promise<string> {
-  try {
-    // Check cache first
-    const cacheKey = `sentiment:${text.substring(0, 50)}`;
-    const cached = await env.FEEDBACK_CACHE.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
+// Enhanced keyword-based sentiment analysis (primary method)
+function analyzeSentimentWithKeywords(text: string): string {
+  const lowerText = text.toLowerCase();
+  
+  // Strong positive keywords
+  const strongPositiveKeywords = [
+    'love', 'amazing', 'excellent', 'fantastic', 'perfect', 'awesome', 'brilliant',
+    'outstanding', 'superb', 'incredible', 'wonderful', 'best', 'great', 'impressive'
+  ];
+  
+  // Moderate positive keywords
+  const positiveKeywords = [
+    'smooth', 'helpful', 'appreciate', 'fast', 'quick', 'easy', 'seamless',
+    'game changer', 'generous', 'peace of mind', 'straightforward', 'well-documented',
+    'lightning fast', 'dropped', 'improved', 'better', 'cleaner', 'easier', 'good',
+    'nice', 'satisfied', 'recommend', 'thank', 'thanks', 'pleased', 'happy',
+    'works perfectly', 'works great', 'works well', 'really good', 'very good',
+    'highly recommend', 'definitely recommend', 'strongly recommend', 'love it',
+    'really like', 'really impressed', 'very impressed', 'quite good', 'pretty good'
+  ];
+  
+  // Strong negative keywords
+  const strongNegativeKeywords = [
+    'hate', 'terrible', 'awful', 'horrible', 'worst', 'broken', 'failed', 'frustrating'
+  ];
+  
+  // Moderate negative keywords
+  const negativeKeywords = [
+    'slow', 'bug', 'error', 'confusing', 'bad', 'issue', 'problem', 'cannot', "can't",
+    'difficult', 'hard', 'complicated', 'disappointed', 'poor', 'worst', 'terrible',
+    'frustrated', 'annoying', 'useless', 'broken', 'doesn\'t work', 'not working'
+  ];
+  
+  // Count keyword matches
+  const strongPositiveCount = strongPositiveKeywords.filter(kw => lowerText.includes(kw)).length;
+  const positiveCount = positiveKeywords.filter(kw => lowerText.includes(kw)).length;
+  const strongNegativeCount = strongNegativeKeywords.filter(kw => lowerText.includes(kw)).length;
+  const negativeCount = negativeKeywords.filter(kw => lowerText.includes(kw)).length;
+  
+  // Calculate scores (strong keywords count more)
+  const positiveScore = (strongPositiveCount * 3) + positiveCount;
+  const negativeScore = (strongNegativeCount * 3) + negativeCount;
+  
+  // Determine sentiment based on scores
+  if (positiveScore > negativeScore && positiveScore > 0) {
+    return 'positive';
+  } else if (negativeScore > positiveScore && negativeScore > 0) {
+    return 'negative';
+  }
+  
+  return 'neutral';
+}
 
-    // Use Workers AI for sentiment analysis
+async function analyzeSentiment(env: Env, text: string): Promise<string> {
+  // Always run keyword analysis first (most reliable)
+  const keywordSentiment = analyzeSentimentWithKeywords(text);
+  
+  // Check cache, but validate against keyword analysis
+  // Using versioned cache key to ensure fresh analysis with improved logic
+  const cacheKey = `sentiment:v2:${text.substring(0, 50)}`;
+  const cached = await env.FEEDBACK_CACHE.get(cacheKey);
+  
+  // If we have strong keyword signals, always use keyword analysis (override cache)
+  const lowerText = text.toLowerCase();
+  const hasStrongPositive = ['love', 'amazing', 'excellent', 'fantastic', 'perfect', 'awesome', 'brilliant', 'outstanding', 'incredible', 'wonderful', 'best'].some(kw => lowerText.includes(kw));
+  const hasStrongNegative = ['hate', 'terrible', 'awful', 'horrible', 'worst', 'broken', 'failed', 'frustrating'].some(kw => lowerText.includes(kw));
+  
+  // If strong keyword signals exist, use keyword analysis and bypass/update cache
+  if (hasStrongPositive || hasStrongNegative) {
+    await env.FEEDBACK_CACHE.put(cacheKey, keywordSentiment, { expirationTtl: 3600 });
+    return keywordSentiment;
+  }
+  
+  // If cached value exists and keyword analysis agrees or is neutral, use cache
+  if (cached && (cached === keywordSentiment || keywordSentiment === 'neutral')) {
+    return cached;
+  }
+  
+  // If cached value conflicts with keyword analysis, re-analyze
+  // Try AI analysis, but validate with keywords
+  let aiSentiment: string | null = null;
+  try {
     const response = await env.AI.run('@cf/huggingface/distilbert-sst-2-int8', {
       text: text
     });
-
-    const sentiment = response[0].label === 'POSITIVE' ? 'positive' : 
-                     response[0].label === 'NEGATIVE' ? 'negative' : 'neutral';
-
-    // Cache the result
-    await env.FEEDBACK_CACHE.put(cacheKey, sentiment, { expirationTtl: 3600 });
-
-    return sentiment;
+    aiSentiment = response[0].label === 'POSITIVE' ? 'positive' : 
+                  response[0].label === 'NEGATIVE' ? 'negative' : 'neutral';
   } catch (error) {
-    console.error('Sentiment analysis error:', error);
-    // Fallback: simple keyword-based sentiment
-    const lowerText = text.toLowerCase();
-    if (lowerText.includes('love') || lowerText.includes('great') || lowerText.includes('excellent') || lowerText.includes('fast')) {
-      return 'positive';
-    } else if (lowerText.includes('hate') || lowerText.includes('slow') || lowerText.includes('bug') || lowerText.includes('error')) {
-      return 'negative';
-    }
-    return 'neutral';
+    console.error('AI sentiment analysis error:', error);
+    // If AI fails, use keyword analysis
+    await env.FEEDBACK_CACHE.put(cacheKey, keywordSentiment, { expirationTtl: 3600 });
+    return keywordSentiment;
   }
+
+  // Hybrid approach: Prefer keyword analysis when it finds something
+  let finalSentiment: string;
+  if (keywordSentiment !== 'neutral' && aiSentiment === 'neutral') {
+    // If keywords found something but AI says neutral, trust keywords
+    finalSentiment = keywordSentiment;
+  } else if (keywordSentiment === 'neutral' && aiSentiment !== 'neutral') {
+    // If keywords say neutral but AI found something, trust AI
+    finalSentiment = aiSentiment;
+  } else {
+    // If both agree or both found something, prefer keyword analysis for positive/negative
+    finalSentiment = keywordSentiment !== 'neutral' ? keywordSentiment : aiSentiment;
+  }
+
+  // Cache the result
+  await env.FEEDBACK_CACHE.put(cacheKey, finalSentiment, { expirationTtl: 3600 });
+
+  return finalSentiment;
 }
 
 // Extract themes from feedback
@@ -1029,8 +1326,9 @@ function getCategoryBreakdown(feedbackList: any[]): any[] {
   });
   
   return Object.entries(categoryMap)
-    .map(([name, count]) => ({ 
-      name: name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), 
+    .map(([key, count]) => ({ 
+      key: key, // Store original key for filtering
+      name: key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), 
       count 
     }))
     .sort((a, b) => b.count - a.count);

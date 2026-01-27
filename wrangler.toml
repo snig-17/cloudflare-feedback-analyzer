@@ -1,0 +1,18 @@
+name = "feedback-analyzer"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# Workers AI binding for sentiment analysis
+[ai]
+binding = "AI"
+
+# D1 Database binding for storing feedback
+[[d1_databases]]
+binding = "FEEDBACK_DB"
+database_name = "feedback-database"
+database_id = "preview-database-id"
+
+# KV namespace for caching sentiment analysis results
+[[kv_namespaces]]
+binding = "FEEDBACK_CACHE"
+id = "preview-kv-id"

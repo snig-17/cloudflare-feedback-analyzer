@@ -1,0 +1,25 @@
+{
+  "name": "feedback-analyzer",
+  "version": "1.0.0",
+  "description": "Cloudflare Workers feedback aggregation and analysis tool",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "cloudflare",
+    "workers",
+    "feedback",
+    "analytics",
+    "ai"
+  ],
+  "author": "PM Intern Candidate",
+  "license": "MIT",
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241127.0",
+    "wrangler": "^3.94.0",
+    "typescript": "^5.7.3"
+  }
+}

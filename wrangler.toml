@@ -10,9 +10,9 @@ binding = "AI"
 [[d1_databases]]
 binding = "FEEDBACK_DB"
 database_name = "feedback-database"
-database_id = "preview-database-id"
+database_id = "ee4e9f9b-e125-41e2-9a80-c95667b6bcf8"
 
 # KV namespace for caching sentiment analysis results
 [[kv_namespaces]]
 binding = "FEEDBACK_CACHE"
-id = "preview-kv-id"
+id = "12f641bdb3804fa1b7de70bf5add8229"

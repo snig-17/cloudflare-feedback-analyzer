@@ -16,84 +16,252 @@ const MOCK_FEEDBACK = [
     source: "GitHub",
     text: "The DNS propagation is too slow. It takes hours to see changes reflected globally.",
     timestamp: "2026-01-26T10:30:00Z",
-    user: "developer_123"
+    user: "developer_123",
+    votes: 28,
+    category: "performance_complaint"
   },
   {
     id: 2,
     source: "Discord",
     text: "Workers dashboard is confusing. Can't find where to add environment variables.",
     timestamp: "2026-01-26T14:20:00Z",
-    user: "jane_dev"
+    user: "jane_dev",
+    votes: 19,
+    category: "bug_report"
   },
   {
     id: 3,
     source: "Support Ticket",
     text: "Love the Workers AI integration! Made our chatbot 10x faster. Great documentation too!",
     timestamp: "2026-01-26T09:15:00Z",
-    user: "startup_founder"
+    user: "startup_founder",
+    votes: 31,
+    category: "praise"
   },
   {
     id: 4,
     source: "Twitter",
     text: "Pages deployment failed again. No clear error message. This is frustrating!",
     timestamp: "2026-01-25T16:45:00Z",
-    user: "frontend_dev"
+    user: "frontend_dev",
+    votes: 24,
+    category: "bug_report"
   },
   {
     id: 5,
     source: "Email",
     text: "The R2 pricing is very competitive. Migrated from S3 and saved 80% on storage costs.",
     timestamp: "2026-01-25T11:00:00Z",
-    user: "cto_tech"
+    user: "cto_tech",
+    votes: 15,
+    category: "pricing_feedback"
   },
   {
     id: 6,
     source: "GitHub",
     text: "Wrangler CLI keeps throwing authentication errors. Tried logging in 5 times.",
     timestamp: "2026-01-25T08:30:00Z",
-    user: "backend_eng"
+    user: "backend_eng",
+    votes: 22,
+    category: "bug_report"
   },
   {
     id: 7,
     source: "Discord",
     text: "D1 database queries are lightning fast! Really impressed with the performance.",
     timestamp: "2026-01-24T15:20:00Z",
-    user: "fullstack_dev"
+    user: "fullstack_dev",
+    votes: 18,
+    category: "praise"
   },
   {
     id: 8,
     source: "Support Ticket",
     text: "Cannot find documentation on Workers bindings. Searched for 30 minutes.",
     timestamp: "2026-01-24T13:10:00Z",
-    user: "new_developer"
+    user: "new_developer",
+    votes: 12,
+    category: "documentation_issue"
   },
   {
     id: 9,
     source: "Community Forum",
     text: "Cloudflare Tunnel setup was seamless. Best zero-trust solution I've used.",
     timestamp: "2026-01-24T10:05:00Z",
-    user: "devops_lead"
+    user: "devops_lead",
+    votes: 9,
+    category: "praise"
   },
   {
     id: 10,
     source: "Twitter",
     text: "Why does KV have eventual consistency? Need strong consistency for my use case.",
     timestamp: "2026-01-23T17:30:00Z",
-    user: "architect_pro"
+    user: "architect_pro",
+    votes: 7,
+    category: "feature_request"
   },
   {
     id: 11,
     source: "GitHub",
     text: "Workers AI Llama model is great but rate limits are too restrictive for testing.",
     timestamp: "2026-01-23T14:00:00Z",
-    user: "ml_engineer"
+    user: "ml_engineer",
+    votes: 14,
+    category: "feature_request"
   },
   {
     id: 12,
     source: "Email",
     text: "The new dashboard redesign is much cleaner. Easier to navigate now!",
     timestamp: "2026-01-23T09:45:00Z",
-    user: "pm_user"
+    user: "pm_user",
+    votes: 6,
+    category: "praise"
+  },
+  {
+    id: 13,
+    source: "GitHub",
+    text: "Excellent customer support! The team responded within minutes and helped resolve our issue quickly.",
+    timestamp: "2026-01-22T16:20:00Z",
+    user: "happy_customer",
+    votes: 25,
+    category: "praise"
+  },
+  {
+    id: 14,
+    source: "Discord",
+    text: "The Workers runtime is incredibly fast. Our API response times dropped from 200ms to 15ms after migrating.",
+    timestamp: "2026-01-22T11:30:00Z",
+    user: "api_optimizer",
+    votes: 29,
+    category: "praise"
+  },
+  {
+    id: 15,
+    source: "Community Forum",
+    text: "Stream API is a game changer for real-time applications. Implementation was straightforward and well-documented.",
+    timestamp: "2026-01-22T08:15:00Z",
+    user: "realtime_dev",
+    votes: 20,
+    category: "praise"
+  },
+  {
+    id: 16,
+    source: "Twitter",
+    text: "Cloudflare's free tier is generous. Perfect for side projects and learning. Really appreciate it!",
+    timestamp: "2026-01-21T19:45:00Z",
+    user: "student_dev",
+    votes: 17,
+    category: "praise"
+  },
+  {
+    id: 17,
+    source: "Email",
+    text: "The analytics dashboard provides great insights. Helped us identify and fix performance bottlenecks.",
+    timestamp: "2026-01-21T14:10:00Z",
+    user: "data_analyst",
+    votes: 13,
+    category: "praise"
+  },
+  {
+    id: 18,
+    source: "Support Ticket",
+    text: "Zero-downtime deployments with Workers are amazing. Our users never notice when we push updates.",
+    timestamp: "2026-01-21T10:00:00Z",
+    user: "sre_engineer",
+    votes: 27,
+    category: "praise"
+  },
+  {
+    id: 19,
+    source: "GitHub",
+    text: "Considering adding support for WebAssembly modules in Workers. Would this improve performance for compute-heavy tasks?",
+    timestamp: "2026-01-20T15:30:00Z",
+    user: "wasm_enthusiast",
+    votes: 11,
+    category: "feature_request"
+  },
+  {
+    id: 20,
+    source: "Discord",
+    text: "Currently evaluating Cloudflare Workers for our microservices architecture. Need to understand pricing for high-traffic scenarios.",
+    timestamp: "2026-01-20T12:00:00Z",
+    user: "architect_consultant",
+    votes: 8,
+    category: "feature_request"
+  },
+  {
+    id: 21,
+    source: "Community Forum",
+    text: "The Workers documentation mentions rate limits but doesn't specify exact numbers. Could we get more details on this?",
+    timestamp: "2026-01-20T09:20:00Z",
+    user: "docs_seeker",
+    votes: 10,
+    category: "documentation_issue"
+  },
+  {
+    id: 22,
+    source: "Twitter",
+    text: "Exploring Cloudflare's edge computing capabilities. How does it compare to traditional serverless platforms?",
+    timestamp: "2026-01-19T17:00:00Z",
+    user: "tech_researcher",
+    votes: 5,
+    category: "feature_request"
+  },
+  {
+    id: 23,
+    source: "Email",
+    text: "The Workers platform supports TypeScript out of the box, which is helpful for our team's workflow.",
+    timestamp: "2026-01-19T13:45:00Z",
+    user: "typescript_dev",
+    votes: 16,
+    category: "praise"
+  },
+  {
+    id: 24,
+    source: "Support Ticket",
+    text: "Interested in learning more about Durable Objects. Are there any best practices guides available?",
+    timestamp: "2026-01-19T10:30:00Z",
+    user: "learning_dev",
+    votes: 9,
+    category: "documentation_issue"
+  },
+  {
+    id: 25,
+    source: "GitHub",
+    text: "The integration with GitHub Actions for CI/CD is smooth. Deployment pipeline setup took less than an hour.",
+    timestamp: "2026-01-18T16:15:00Z",
+    user: "ci_cd_engineer",
+    votes: 21,
+    category: "praise"
+  },
+  {
+    id: 26,
+    source: "Discord",
+    text: "Cloudflare's global network coverage is impressive. Our users worldwide experience consistent low latency.",
+    timestamp: "2026-01-18T11:50:00Z",
+    user: "global_platform",
+    votes: 19,
+    category: "praise"
+  },
+  {
+    id: 27,
+    source: "Community Forum",
+    text: "Wondering if there are plans to add support for GraphQL subscriptions in Workers. Currently using workarounds.",
+    timestamp: "2026-01-18T08:25:00Z",
+    user: "graphql_dev",
+    votes: 7,
+    category: "feature_request"
+  },
+  {
+    id: 28,
+    source: "Twitter",
+    text: "The security features like WAF and DDoS protection work seamlessly with Workers. Great peace of mind.",
+    timestamp: "2026-01-17T19:10:00Z",
+    user: "security_focused",
+    votes: 23,
+    category: "praise"
   }
 ];
 
@@ -393,6 +561,110 @@ function getHTMLTemplate(analysisResults: any) {
             border: 1px solid var(--error);
         }
         
+        .vote-count {
+            font-family: 'Space Mono', monospace;
+            color: var(--accent-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .vote-icon {
+            font-size: 1.1rem;
+        }
+
+        .anomaly-alert {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            border: 2px solid var(--error);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.9; }
+        }
+
+        .anomaly-alert h3 {
+            color: var(--error);
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .anomaly-details {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .trend-chart {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-end;
+            height: 150px;
+            margin: 1.5rem 0;
+        }
+
+        .trend-bar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .trend-column {
+            width: 100%;
+            background: linear-gradient(to top, var(--accent-primary), var(--accent-secondary));
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .trend-column:hover {
+            filter: brightness(1.2);
+        }
+
+        .trend-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .category-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .category-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .category-name {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .category-count {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+        
         footer {
             margin-top: 4rem;
             padding-top: 2rem;
@@ -499,6 +771,71 @@ function getHTMLTemplate(analysisResults: any) {
             </div>
         </section>
         
+        ${analysisResults.anomalyCheck.hasAnomaly ? `
+        <div class="anomaly-alert">
+            <h3>🚨 ${analysisResults.anomalyCheck.severity === 'critical' ? 'Critical' : 'High'} Priority Alert</h3>
+            <p style="margin-bottom: 0.5rem; font-size: 1.1rem; color: var(--text-primary);">${analysisResults.anomalyCheck.message}</p>
+            <div class="anomaly-details">
+                <strong>Affected categories:</strong> ${analysisResults.anomalyCheck.affectedCategories.join(', ')}
+            </div>
+            <div class="anomaly-details" style="margin-top: 0.5rem;">
+                <strong>Recommendation:</strong> Investigate recent changes in ${analysisResults.anomalyCheck.affectedCategories[0].replace(/_/g, ' ')} immediately
+            </div>
+        </div>
+        ` : ''}
+
+        <section class="section">
+            <h2 class="section-title">🔥 Top Voted Feedback</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">
+                What customers are upvoting most - prioritize these items
+            </p>
+            <div class="themes-list">
+                ${analysisResults.topVoted.map((feedback: any, index: number) => `
+                    <div class="theme-item" style="animation-delay: ${0.9 + index * 0.1}s; opacity: 0;">
+                        <div style="flex: 1;">
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.25rem;">${feedback.source} • ${feedback.category?.replace(/_/g, ' ')}</div>
+                            <div class="theme-name" style="font-size: 1rem;">${feedback.text.substring(0, 80)}${feedback.text.length > 80 ? '...' : ''}</div>
+                        </div>
+                        <div class="vote-count" style="font-size: 1.2rem;">
+                            <span class="vote-icon">▲</span>${feedback.votes}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">📊 Feedback by Category</h2>
+            <div class="category-grid">
+                ${analysisResults.categoryBreakdown.map((category: any, index: number) => `
+                    <div class="category-card" style="animation-delay: ${1.1 + index * 0.05}s; opacity: 0;">
+                        <div class="category-name">${category.name}</div>
+                        <div class="category-count">${category.count}</div>
+                    </div>
+                `).join('')}
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">📈 7-Day Sentiment Trend</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.95rem;">
+                ${analysisResults.trendData.length > 0 ? 'Positive sentiment trend over the past week' : 'Not enough data for trend analysis'}
+            </p>
+            ${analysisResults.trendData.length > 0 ? `
+            <div class="trend-chart">
+                ${analysisResults.trendData.map((day: any, index: number) => `
+                    <div class="trend-bar">
+                        <div class="trend-column" style="height: ${day.positiveRate}%; animation-delay: ${1.3 + index * 0.1}s; opacity: 0;"></div>
+                        <div class="trend-label">${new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
+                    </div>
+                `).join('')}
+            </div>
+            <div style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+                <span style="color: var(--accent-primary);">■</span> Positive Sentiment %
+            </div>
+            ` : ''}
+        </section>
+        
         <section class="section">
             <h2 class="section-title">Recent Feedback</h2>
             <div class="feedback-list">
@@ -506,11 +843,15 @@ function getHTMLTemplate(analysisResults: any) {
                     <div class="feedback-item" style="animation-delay: ${0.7 + index * 0.05}s; opacity: 0;">
                         <div class="feedback-header">
                             <span class="feedback-source">${feedback.source}</span>
-                            <span class="feedback-time">${new Date(feedback.timestamp).toLocaleDateString()}</span>
+                            <div style="display: flex; gap: 1rem; align-items: center;">
+                                <span class="vote-count"><span class="vote-icon">▲</span>${feedback.votes || 0}</span>
+                                <span class="feedback-time">${new Date(feedback.timestamp).toLocaleDateString()}</span>
+                            </div>
                         </div>
                         <p class="feedback-text">${feedback.text}</p>
                         <div class="feedback-meta">
                             <span class="badge badge-${feedback.sentiment}">${feedback.sentiment}</span>
+                            ${feedback.category ? `<span class="badge" style="background: var(--bg-card); border: 1px solid var(--border);">${feedback.category.replace(/_/g, ' ')}</span>` : ''}
                             <span>@${feedback.user}</span>
                         </div>
                     </div>
@@ -591,9 +932,140 @@ function extractThemes(feedbackList: any[]): any[] {
     .slice(0, 5);
 }
 
+// NEW FEATURE: Get top voted feedback items
+function getTopVotedFeedback(feedbackList: any[], limit: number = 5): any[] {
+  return [...feedbackList]
+    .sort((a, b) => b.votes - a.votes)
+    .slice(0, limit);
+}
+
+// NEW FEATURE: Calculate trend data (7-day sentiment trends)
+function getTrendData(feedbackList: any[]): any {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  
+  const dailyData: { [key: string]: { positive: number, negative: number, neutral: number, total: number } } = {};
+  
+  feedbackList.forEach(feedback => {
+    const date = new Date(feedback.timestamp);
+    if (date >= sevenDaysAgo) {
+      const dateKey = date.toISOString().split('T')[0];
+      
+      if (!dailyData[dateKey]) {
+        dailyData[dateKey] = { positive: 0, negative: 0, neutral: 0, total: 0 };
+      }
+      
+      dailyData[dateKey][feedback.sentiment as 'positive' | 'negative' | 'neutral']++;
+      dailyData[dateKey].total++;
+    }
+  });
+  
+  const trendArray = Object.entries(dailyData)
+    .map(([date, data]) => ({
+      date,
+      positiveRate: Math.round((data.positive / data.total) * 100),
+      negativeRate: Math.round((data.negative / data.total) * 100),
+      neutralRate: Math.round((data.neutral / data.total) * 100),
+      total: data.total
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date));
+  
+  return trendArray;
+}
+
+// NEW FEATURE: Detect anomalies in sentiment
+function detectAnomalies(recentFeedback: any[], allFeedback: any[]): any {
+  const totalNegative = allFeedback.filter(f => f.sentiment === 'negative').length;
+  const baselineNegativeRate = totalNegative / allFeedback.length;
+  
+  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000);
+  const recentItems = recentFeedback.filter(f => new Date(f.timestamp) >= threeDaysAgo);
+  
+  if (recentItems.length === 0) {
+    return { hasAnomaly: false };
+  }
+  
+  const recentNegative = recentItems.filter(f => f.sentiment === 'negative').length;
+  const recentNegativeRate = recentNegative / recentItems.length;
+  
+  const threshold = baselineNegativeRate * 1.5;
+  
+  if (recentNegativeRate > threshold && recentNegativeRate > 0.3) {
+    const negativeItems = recentItems.filter(f => f.sentiment === 'negative');
+    const affectedThemes: { [key: string]: number } = {};
+    
+    negativeItems.forEach(item => {
+      if (item.category) {
+        affectedThemes[item.category] = (affectedThemes[item.category] || 0) + 1;
+      }
+    });
+    
+    const topAffected = Object.entries(affectedThemes)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 2)
+      .map(([name]) => name);
+    
+    return {
+      hasAnomaly: true,
+      severity: recentNegativeRate > 0.5 ? 'critical' : 'high',
+      message: `⚠️ Negative feedback spike detected: ${Math.round(recentNegativeRate * 100)}% (baseline: ${Math.round(baselineNegativeRate * 100)}%)`,
+      affectedCategories: topAffected,
+      recentNegativeRate: Math.round(recentNegativeRate * 100),
+      baselineRate: Math.round(baselineNegativeRate * 100)
+    };
+  }
+  
+  return { hasAnomaly: false };
+}
+
+// NEW FEATURE: Get category breakdown
+function getCategoryBreakdown(feedbackList: any[]): any[] {
+  const categoryMap: { [key: string]: number } = {};
+  
+  feedbackList.forEach(feedback => {
+    if (feedback.category) {
+      categoryMap[feedback.category] = (categoryMap[feedback.category] || 0) + 1;
+    }
+  });
+  
+  return Object.entries(categoryMap)
+    .map(([name, count]) => ({ 
+      name: name.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()), 
+      count 
+    }))
+    .sort((a, b) => b.count - a.count);
+}
+
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    // NEW FEATURE: Voting API endpoint
+    if (url.pathname === '/api/vote' && request.method === 'POST') {
+      try {
+        const { feedbackId, userId } = await request.json();
+        const voteKey = `vote:${userId}:${feedbackId}`;
+        const hasVoted = await env.FEEDBACK_CACHE.get(voteKey);
+        
+        if (hasVoted) {
+          return new Response(JSON.stringify({ error: 'Already voted' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json' }
+          });
+        }
+        
+        await env.FEEDBACK_CACHE.put(voteKey, 'true', { expirationTtl: 86400 });
+        
+        return new Response(JSON.stringify({ success: true, message: 'Vote recorded!' }), {
+          headers: { 'Content-Type': 'application/json' }
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({ error: 'Vote failed' }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    }
 
     // API endpoint to get analysis
     if (url.pathname === '/api/analyze') {
@@ -616,11 +1088,20 @@ export default {
         // Extract themes
         const themes = extractThemes(MOCK_FEEDBACK);
 
+        const topVoted = getTopVotedFeedback(feedbackWithSentiment, 5);
+        const trendData = getTrendData(feedbackWithSentiment);
+        const anomalyCheck = detectAnomalies(feedbackWithSentiment, feedbackWithSentiment);
+        const categoryBreakdown = getCategoryBreakdown(feedbackWithSentiment);
+
         const analysis = {
           totalFeedback: MOCK_FEEDBACK.length,
           sentimentCounts,
           themes,
-          recentFeedback: feedbackWithSentiment.slice(0, 8)
+          recentFeedback: feedbackWithSentiment.slice(0, 8),
+          topVoted,
+          trendData,
+          anomalyCheck,
+          categoryBreakdown
         };
 
         return new Response(JSON.stringify(analysis), {
@@ -653,11 +1134,20 @@ export default {
 
         const themes = extractThemes(MOCK_FEEDBACK);
 
+        const topVoted = getTopVotedFeedback(feedbackWithSentiment, 5);
+        const trendData = getTrendData(feedbackWithSentiment);
+        const anomalyCheck = detectAnomalies(feedbackWithSentiment, feedbackWithSentiment);
+        const categoryBreakdown = getCategoryBreakdown(feedbackWithSentiment);
+
         const analysisResults = {
           totalFeedback: MOCK_FEEDBACK.length,
           sentimentCounts,
           themes,
-          recentFeedback: feedbackWithSentiment.slice(0, 8)
+          recentFeedback: feedbackWithSentiment.slice(0, 8),
+          topVoted,
+          trendData,
+          anomalyCheck,
+          categoryBreakdown
         };
 
         return new Response(getHTMLTemplate(analysisResults), {
@@ -665,6 +1155,7 @@ export default {
         });
       } catch (error) {
         // Fallback with basic analysis if AI fails
+        const fallbackFeedback = MOCK_FEEDBACK.slice(0, 8).map(f => ({ ...f, sentiment: 'neutral' }));
         const analysisResults = {
           totalFeedback: MOCK_FEEDBACK.length,
           sentimentCounts: { positive: 5, neutral: 3, negative: 4 },
@@ -673,7 +1164,11 @@ export default {
             { name: 'Performance', count: 2 },
             { name: 'Dashboard UX', count: 2 }
           ],
-          recentFeedback: MOCK_FEEDBACK.slice(0, 8).map(f => ({ ...f, sentiment: 'neutral' }))
+          recentFeedback: fallbackFeedback,
+          topVoted: getTopVotedFeedback(fallbackFeedback, 5),
+          trendData: getTrendData(fallbackFeedback),
+          anomalyCheck: detectAnomalies(fallbackFeedback, fallbackFeedback),
+          categoryBreakdown: getCategoryBreakdown(fallbackFeedback)
         };
 
         return new Response(getHTMLTemplate(analysisResults), {

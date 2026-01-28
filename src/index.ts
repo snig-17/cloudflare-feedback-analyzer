@@ -489,9 +489,10 @@ function getHTMLTemplate(analysisResults: any) {
             --border: #2d3342;
             --border-light: #3a4254;
             
-            --text-primary: #e6edf8;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
+            /* Brightened Text Colors */
+            --text-primary: #f1f5f9;  /* Creating higher contrast */
+            --text-secondary: #cbd5e1; /* Much lighter than previous */
+            --text-muted: #94a3b8;    /* Lighter grey */
             
             --accent: #3b82f6;
             --accent-glow: rgba(59, 130, 246, 0.15);
@@ -511,13 +512,17 @@ function getHTMLTemplate(analysisResults: any) {
         
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden;
+        }
+
         body {
             font-family: var(--font-sans);
             background: var(--bg-app);
             color: var(--text-primary);
-            height: 100vh;
-            overflow: hidden;
-            font-size: 14px;
+            font-size: 16px; 
             -webkit-font-smoothing: antialiased;
         }
         
@@ -525,22 +530,24 @@ function getHTMLTemplate(analysisResults: any) {
         .app-layout {
             display: grid;
             grid-template-columns: 260px 1fr 380px;
-            grid-template-rows: 60px 1fr;
-            height: 100vh;
+            grid-template-rows: 60px minmax(0, 1fr); /* minmax(0, 1fr) is critical for scrolling */
+            height: 100%;
+            width: 100%;
         }
         
         @media (max-width: 1200px) {
             .app-layout {
-                grid-template-columns: 240px 1fr 0; /* Hide details on small, toggle via overlay */
+                grid-template-columns: 240px 1fr 0; 
             }
             .app-layout.details-open {
-                grid-template-columns: 240px 1fr 380px; /* Force open if space allows or overlay */
+                grid-template-columns: 240px 1fr 380px;
             }
         }
         
         /* Header */
         header {
             grid-column: 1 / -1;
+            grid-row: 1;
             background: var(--bg-panel);
             border-bottom: 1px solid var(--border);
             display: flex;
@@ -549,7 +556,7 @@ function getHTMLTemplate(analysisResults: any) {
             justify-content: space-between;
             z-index: 10;
         }
-        
+
         .brand {
             display: flex;
             align-items: center;
@@ -600,15 +607,17 @@ function getHTMLTemplate(analysisResults: any) {
             display: flex;
             gap: 1rem;
         }
-        
+
         /* Sidebar */
         aside {
+            grid-row: 2; /* Explicit row placement */
             background: var(--bg-panel);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             padding: 1.5rem 1rem;
             overflow-y: auto;
+            min-height: 0; /* Fix flex/grid overflow issues */
         }
         
         .nav-section {
@@ -676,11 +685,13 @@ function getHTMLTemplate(analysisResults: any) {
 
         /* Main Feed */
         main {
+            grid-row: 2; /* Explicit row placement */
             background: var(--bg-app);
             display: flex;
             flex-direction: column;
             overflow: hidden;
             position: relative;
+            min-height: 0; /* Fix flex/grid overflow issues */
         }
         
         .feed-header {

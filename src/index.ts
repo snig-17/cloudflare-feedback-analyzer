@@ -608,6 +608,41 @@ function getHTMLTemplate(analysisResults: any) {
             gap: 1rem;
         }
 
+        .sort-select {
+            background: var(--bg-app);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .sort-select:focus {
+            border-color: var(--accent);
+        }
+
+        .markdown-content h2 {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .markdown-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .markdown-content li {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+        
         /* Sidebar */
         aside {
             grid-row: 2; /* Explicit row placement */
@@ -965,6 +1000,9 @@ function getHTMLTemplate(analysisResults: any) {
                     <span><span class="nav-icon">⚠️</span>Anomalies</span>
                     ${analysisResults.anomalyCheck.hasAnomaly ? '<span class="nav-count text-neg">!</span>' : ''}
                 </a>
+                <a href="#" class="nav-item" onclick="setView('roadmap')">
+                    <span><span class="nav-icon">🤖</span>AI Roadmap</span>
+                </a>
             </div>
             
             <div class="nav-section">
@@ -988,7 +1026,13 @@ function getHTMLTemplate(analysisResults: any) {
                 <div class="feed-title">
                     <h2 id="view-title">Unified Inbox</h2>
                 </div>
-                <div class="feed-meta" id="feed-count">Loading...</div>
+                <div class="feed-meta" style="display: flex; align-items: center; gap: 1rem;">
+                    <span id="feed-count">Loading...</span>
+                    <select class="sort-select" onchange="changeSort(this.value)">
+                        <option value="newest">Newest First</option>
+                        <option value="priority">Highest Priority</option>
+                    </select>
+                </div>
             </div>
             <div class="feed-list" id="feed-list">
                 <!-- Feedback items injected via JS -->
@@ -1012,6 +1056,7 @@ function getHTMLTemplate(analysisResults: any) {
         let activeTheme = null;
         let activeSegments = new Set(['Enterprise', 'Paid', 'Free']);
         let selectedFeedbackId = null;
+        let currentSort = 'newest';
 
         // Icons map
         const sourceIcons = {
@@ -1055,7 +1100,14 @@ function getHTMLTemplate(analysisResults: any) {
             }
 
             // Segment Filter
-            return items.filter(item => activeSegments.has(item.segment || 'Free'));
+            items = items.filter(item => activeSegments.has(item.segment || 'Free'));
+
+            // Sort logic
+            if (currentSort === 'priority') {
+                return items.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+            } else {
+                return items.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            }
         }
 
         // Render Feed
@@ -1100,13 +1152,38 @@ function getHTMLTemplate(analysisResults: any) {
         }
 
         // Interactions
+        window.changeSort = (sortVal) => {
+            currentSort = sortVal;
+            if (currentView === 'inbox' || currentView === 'top-voted') renderFeed();
+        };
+
         window.setView = (view) => {
             currentView = view;
             activeTheme = null;
-            document.getElementById('view-title').textContent = view === 'inbox' ? 'Unified Inbox' : view === 'top-voted' ? 'Top Voted' : 'Anomalies';
-            // update nav active state logic omitted for brevity
-            renderFeed();
+            document.getElementById('view-title').textContent = 
+                view === 'inbox' ? 'Unified Inbox' : 
+                view === 'top-voted' ? 'Top Voted' : 
+                view === 'anomalies' ? 'Anomalies' : 'AI Strategic Roadmap';
+            
+            if (view === 'roadmap') {
+                renderRoadmap();
+            } else {
+                renderFeed();
+            }
         };
+
+        function renderRoadmap() {
+            const container = document.getElementById('feed-list');
+            document.getElementById('feed-count').textContent = 'Succinct Strategy';
+            // Simple markdown rendering regex for demo
+            let html = data.actionPlan
+                .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+                .replace(/^\d\. (.*$)/gim, '<li>$1</li>')
+                .replace(/^\- (.*$)/gim, '<li>$1</li>')
+                .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
+                
+            container.innerHTML = \`<div class="markdown-content" style="padding: 2rem; max-width: 800px; margin: 0 auto;">\${html}</div>\`;
+        }
 
         window.filterByTheme = (themeName) => {
             currentView = 'theme';
@@ -1425,6 +1502,45 @@ function detectAnomalies(recentFeedback: any[], allFeedback: any[]): any {
   return { hasAnomaly: false };
 }
 
+// NEW FEATURE: Generate AI Action Plan
+async function generateActionPlan(env: Env, themes: any[], anomalies: any): Promise<string> {
+  try {
+    const topThemes = themes.slice(0, 3).map((t: any) => `${t.name} (Priority: ${t.avgPriority})`).join(', ');
+    const anomalyContext = anomalies.hasAnomaly ? `CRITICAL: ${anomalies.message}. Sectors: ${anomalies.affectedCategories.join(', ')}.` : "No critical anomalies detected.";
+
+    const prompt = `
+      As a Product Manager at Cloudflare, generate a concise, strategic Action Plan based on this feedback analysis:
+      
+      Top Themes: ${topThemes}
+      Anomalies: ${anomalyContext}
+      
+      Format as Markdown with these sections:
+      ## 🎯 Strategic Focus
+      1-2 sentences on the main goal.
+      
+      ## 🚨 Immediate Actions
+      Bullet points for critical fixes.
+      
+      ## 🗓️ Short-term Roadmap
+      Bullet points for high-priority features.
+      
+      ## 💡 Long-term Vision
+      1 sentence on future direction.
+      
+      Keep it professional, data-driven, and actionable.
+    `;
+
+    const response = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    return (response as any).response;
+  } catch (error) {
+    console.error("AI Plan Gen Error:", error);
+    return "## ⚠️ AI Service Unavailable\n\nUnable to generate action plan at this time. Please rely on the manual feedback analysis.";
+  }
+}
+
 
 
 export default {
@@ -1482,7 +1598,7 @@ export default {
         const topVoted = getTopVotedFeedback(feedbackWithSentiment, 5);
         const trendData = getTrendData(feedbackWithSentiment);
         const anomalyCheck = detectAnomalies(feedbackWithSentiment, feedbackWithSentiment);
-
+        const actionPlan = await generateActionPlan(env, themes, anomalyCheck);
 
         const analysis = {
           totalFeedback: MOCK_FEEDBACK.length,
@@ -1492,7 +1608,7 @@ export default {
           topVoted,
           trendData,
           anomalyCheck,
-
+          actionPlan
         };
 
         return new Response(JSON.stringify(analysis), {
@@ -1524,11 +1640,12 @@ export default {
         };
 
         const themes = extractThemes(MOCK_FEEDBACK);
-
         const topVoted = getTopVotedFeedback(feedbackWithSentiment, 5);
         const trendData = getTrendData(feedbackWithSentiment);
         const anomalyCheck = detectAnomalies(feedbackWithSentiment, feedbackWithSentiment);
 
+        // Generate AI Plan
+        const actionPlan = await generateActionPlan(env, themes, anomalyCheck);
 
         const analysisResults = {
           totalFeedback: MOCK_FEEDBACK.length,
@@ -1538,7 +1655,7 @@ export default {
           topVoted,
           trendData,
           anomalyCheck,
-
+          actionPlan
         };
 
         return new Response(getHTMLTemplate(analysisResults), {
